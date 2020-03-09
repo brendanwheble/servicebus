@@ -91,8 +91,8 @@ Queue.prototype.listen = function listen (callback, options) {
         If the consumer is cancelled by RabbitMQ, the message callback will be invoked with null.
       */
     if (message === null) {
-      if(options.errorOnConsumerCancel === true){
-        self.bus('error', new Error('Consumer Cancelled:' + this.queueName));
+      if(self.errorOnConsumerCancel === true){
+        self.bus.emit('error', new Error('Consumer Cancelled:' + self.queueName));
       }
       return;
     }
