@@ -18,6 +18,7 @@ function Queue (options) {
   this.assertQueue = (options.assertQueue === undefined) ? true : options.assertQueue;
   this.bus = options.bus;
   this.confirmChannel = options.confirmChannel;
+  this.errorOnConsumerCancel = (options.errorOnConsumerCancel === undefined) ? true : options.errorOnConsumerCancel;
   this.errorQueueName = options.queueName + '.error';
   this.formatter = options.formatter;
   this.initialized = false;
@@ -90,6 +91,9 @@ Queue.prototype.listen = function listen (callback, options) {
         If the consumer is cancelled by RabbitMQ, the message callback will be invoked with null.
       */
     if (message === null) {
+      if(options.errorOnConsumerCancel === true){
+        self.bus('error', new Error('Consumer Cancelled:' + this.queueName));
+      }
       return;
     }
     message.content = options.formatter.deserialize(message.content.toString());
